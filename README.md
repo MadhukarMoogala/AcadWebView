@@ -59,6 +59,10 @@ dotnet build
 
 
 
+https://github.com/user-attachments/assets/71616cbb-7015-4bea-8826-b8bf06ab6165
+
+
+
 Once the `WEBVIEWPAL` command runs successfully:  
 
 - The **WebView2 UI** will launch inside an **AutoCAD Palette**.  
