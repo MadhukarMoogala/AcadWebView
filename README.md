@@ -4,6 +4,9 @@ AutoCAD's native UI is powerful, but sometimes we need **modern, interactive, an
 
 This sample demonstrates how to integrate **WebView2** inside AutoCAD using .NET, enabling developers to display rich HTML dashboards and visualize data extracted from AutoCAD drawings.
 
+![image](https://github.com/user-attachments/assets/f2feb906-258e-4fc9-9761-1317624dd977)
+
+
 ## **Data Extraction Overview**
 
 The extracted data is linked to an AutoCAD drawing. In this example, we use the **AutoCAD 2025 Sample Drawing**:  
