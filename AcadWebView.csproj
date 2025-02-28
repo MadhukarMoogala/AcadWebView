@@ -4,7 +4,9 @@
         <RootNamespace>AcadWebView</RootNamespace>
         <TargetFramework>net8.0-windows</TargetFramework>
         <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-        <AssemblySearchPaths>D:\ArxSdks\ARX2025\inc\;$(AssemblySearchPaths)</AssemblySearchPaths>        
+        <ArxSdk>$(ARXSDK_PATH)</ArxSdk>
+        <ArxSdk Condition="'$(ArxSdk)' == ''">D:\ArxSdks\ARX2025</ArxSdk>
+        <AssemblySearchPaths>$(ArxSdk)\inc\;$(AssemblySearchPaths)</AssemblySearchPaths>        
         <UseWPF>true</UseWPF>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
