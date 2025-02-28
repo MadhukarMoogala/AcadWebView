@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCAD Data Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 30%;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+        }
+
+        .content {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .block img {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .block img:hover {
+            transform: scale(1.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        #error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>AutoCAD Data Dashboard</h2>
+    <div id="error"></div>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Block List</h3>
+            <input type="text" id="search" placeholder="Search blocks..." style="width: 100%; padding: 5px; margin-bottom: 10px;">
+            <ul id="blockList"></ul>
+        </div>
+        <div class="content">
+            <h3>Block Details</h3>
+            <div id="blockDetails"></div>
+            <canvas id="chartCanvas" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Listen for messages from WebView2
+        window.chrome.webview.addEventListener("message", event => {
+            try {
+                console.log("Raw WebView2 Message (Before Parsing):", event.data);
+
+                // Ensure the received data is parsed correctly
+                const jsonData = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+                console.log("Parsed JSON from C#:", jsonData);
+
+                // Handle JSON errors gracefully
+                if (!jsonData || typeof jsonData !== "object") {
+                    throw new Error("Received data is not a valid JSON object.");
+                }
+                if (jsonData.error) {
+                    throw new Error(jsonData.error);
+                }
+
+                // Validate JSON Structure
+                if (!jsonData.drawingDataExtractor || !jsonData.drawingDataExtractor.settings) {
+                    throw new Error("Invalid JSON structure");
+                }
+
+                const blockList = $('#blockList');
+                const blockDetails = $('#blockDetails');
+                const blockImages = jsonData.drawingDataExtractor.settings.BlockNameToImageMap;
+
+                if (!blockImages || Object.keys(blockImages).length === 0) {
+                    $('#error').text("No block images found in JSON.");
+                    return;
+                }
+
+                // Clear previous content
+                blockList.empty();
+                blockDetails.empty();
+
+                // Display Blocks
+                for (const [key, base64] of Object.entries(blockImages)) {
+                    const listItem = $('<li>').text(key).click(() => {
+                        blockDetails.html(`
+                    <h4>${key}</h4>
+                    <div class="block">
+                        <img src="data:image/png;base64,${base64}" alt="${key}" />
+                    </div>
+                `);
+                    });
+                    blockList.append(listItem);
+                }
+
+                // Search Functionality
+                $('#search').on("keyup", function () {
+                    const searchTerm = $(this).val().toLowerCase();
+                    $("#blockList li").each(function () {
+                        $(this).toggle($(this).text().toLowerCase().includes(searchTerm));
+                    });
+                });
+
+                // Create Pie Chart for Block Distribution
+                const blockCounts = {};
+                for (const key of Object.keys(blockImages)) {
+                    blockCounts[key] = (blockCounts[key] || 0) + 1;
+                }
+
+                const ctx = document.getElementById('chartCanvas').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(blockCounts),
+                        datasets: [{
+                            data: Object.values(blockCounts),
+                            backgroundColor: ['red', 'blue', 'green', 'orange', 'purple', 'cyan']
+                        }]
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error processing JSON:", error);
+                $('#error').text(`Error: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>

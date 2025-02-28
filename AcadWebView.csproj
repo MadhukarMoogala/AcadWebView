@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <RootNamespace>AcadWebView</RootNamespace>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+        <AssemblySearchPaths>D:\ArxSdks\ARX2025\inc\;$(AssemblySearchPaths)</AssemblySearchPaths>        
+        <UseWPF>true</UseWPF>
+        <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Platforms>x64;AnyCPU</Platforms>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.WindowsDesktop.App"></FrameworkReference>
+        <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3065.39" />
+        <Reference Include="AcDbMgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AcMgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="accoremgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AdWindows">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="AcWindows">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="Web\dashboard.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+</Project>
